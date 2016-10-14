@@ -41,6 +41,8 @@ module.exports = function(passport) {
             passReqToCallback: true
         },
         function(req, username, password, done) {
+            
+            console.log("Got login request");
 
             // Use Cloudant query to find the user 
             var db = Cloudant.use(dbname);

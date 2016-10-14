@@ -64,11 +64,12 @@ function login() {
     xhr.open('POST', uri, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
+        
+         var response = JSON.parse(xhr.responseText);
 
         // Verify if there is a success code response and some text was sent
         if (xhr.status === 200 && xhr.responseText) {
 
-            var response = JSON.parse(xhr.responseText);
             console.log("Got response from passport: ", JSON.stringify(response));
             
             if(response.username) {
@@ -79,6 +80,7 @@ function login() {
                  password = '';
              }
         } else {
+            message.innerHTML = response.message;
             console.error('Server error for passport. Return status of: ', xhr.statusText);
         }
         

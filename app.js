@@ -113,24 +113,16 @@ app.get('/schedule', function(req, res) {
   
 *************************************************************************************************/
 app.post('/login', function(req, res, next) {
-    passport.authenticate('local-login', function(err, user, info) {
-        if (err || !user) {
-            res.status(500).json({
-                message: info
-            });
-        } else {
+      passport.authenticate('local-login', function(err, user, info) {
+        if (err || !user) { res.status(500).json({'message':info}); }
+        else {
             req.logIn(user, function(err) {
-                if (err) {
-                    res.status(500).json({
-                        message: err
-                    });
-                } else {
-                    res.status(200).send();
-                }
-            });
+                if (err) { res.status(500).json({'message':err}); }
+                else { res.status(200).json({'username':user.username}); }  
+            });      
         }
-    });
-});
+      })(req, res, next);
+    }); 
 
 app.post('/signup', function(req, res, next) {
       passport.authenticate('local-signup', function(err, user, info) {
