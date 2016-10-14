@@ -28,7 +28,7 @@ require('dotenv').load();
 
 *************************************************************************************************/
 var db;
-var cloudantURL = process.env.CLOUDANT_URL || "https://c90d754a-c5a3-4c64-82b4-c02018df02fe-bluemix:8f3aabc5af0c62cc72c30410e4068513f83aabd735292faffd8a2edbcd6a62f3@c90d754a-c5a3-4c64-82b4-c02018df02fe-bluemix.cloudant.com";
+var cloudantURL = process.env.CLOUDANT_URL;
 var dbname = "logs";
 var Cloudant = require('cloudant')(cloudantURL);
 
