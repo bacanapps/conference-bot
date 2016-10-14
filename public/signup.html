@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>WoW Chatbot - Register</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div id="wrapper" class="container"> 
+    <!-- Header -->
+    <section id="header">
+        <header> <img src="css/images/logo.png" alt="watson" /> </header>
+        <nav id="nav">
+            <ul>
+                <li><a href=".">Home</a></li>
+                <li><a href="./chat">Chat</a></li>
+                <li><a href="./schedule">Schedule</a></li>
+            </ul>
+        </nav>
+    </section>
+    <section class="main">
+        <section>
+            <h1> Register</h1>
+             <div class="message" id="message"></div>
+            <div class="login">
+                <form class="loginform">
+                    <input id="email" class="logininput" type="text" name="email" placeholder="Username" autofocus required>
+                    <input id="password" class="logininput" type="password" name="password" placeholder="Password" required>
+                    <button class="button" onclick="register();">Register for Account</button>
+                    <div><a href="./login">Login</a></div>
+                </form>
+            </div>
+        </section>
+    </section>
+</div>
+<script src="js/skel.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

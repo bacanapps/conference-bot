@@ -1,0 +1,30 @@
+{
+	"name": "ConferenceBot",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app.js"
+	},
+	"dependencies": {
+		"bcrypt-nodejs": "*",
+        "body-parser": "~1.13.2",
+        "cfenv": "^1.0.3",
+        "ejs":"*",
+        "connect-flash": "~0.1.1",
+        "cookie-parser": "~1.4.3",
+        "dotenv": "*",
+        "express": "4.13.x",
+        "morgan":"*",
+        "express-session": "~1.14.0",
+        "cloudant":"*",
+        "passport": "~0.3.2",
+        "passport-local": "~1.0.0",
+        "connect-ensure-login":"*",
+        "request": "~2.73.0",
+        "watson-developer-cloud": "*"
+	},
+	"repository": {},
+	"engines": {
+		"node": "4.3.x"
+	} 
+}

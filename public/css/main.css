@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css?family=Asap');
+
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body {
+    background-color: #18435A;
+}
+body, input, select, textarea {
+    color: #a2a2a2;
+    font-family: "Asap", sans-serif;
+    font-size: 15pt;
+    font-weight: 300;
+    line-height: 1.75em;
+}
+a {
+    -moz-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    border-bottom: dotted 1px;
+    color: inherit;
+    text-decoration: none;
+}
+a:hover {
+    border-bottom-color: transparent;
+    color: #8CC640 !important;
+    text-decoration: none;
+}
+p {
+    margin: 0 0 2em 0;
+    font-size: 16px;
+}
+h1, h2, h3 {
+    color: #ffffff;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    line-height: 1em;
+    margin: 0 0 1em 0;
+    text-transform: uppercase;
+}
+h1 a, h2 a, h3 a {
+    color: inherit;
+    border-bottom: 0;
+}
+h2 {
+    font-size: 1.75em;
+    line-height: 2em;
+}
+h3 {
+    font-size: 1.35em;
+    line-height: 1.75em;
+}
+form {
+    margin: 0 0 2em 0;
+}
+label {
+    color: #ffffff;
+    display: block;
+    font-size: 0.9em;
+    font-weight: 300;
+    margin: 0 0 1em 0;
+}
+input[type="text"], input[type="password"], input[type="email"], select, textarea {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    background: rgba(207, 201, 214, 0.035);
+    border-radius: 8px;
+    border: none;
+    border: solid 1px #3D4F60;
+    color: inherit;
+    display: block;
+    outline: 0;
+    padding: 0 1em;
+    text-decoration: none;
+    width: 100%;
+    height: 2.75em;
+}
+input[type="text"]:invalid, input[type="password"]:invalid, input[type="email"]:invalid, select:invalid, textarea:invalid {
+ box-shadow: none;
+ border: 1px solid red;
+}
+input[type="text"]:valid, input[type="password"]:valid, input[type="email"]:valid, select:valid, textarea:valid {
+  border: 1px solid green;
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
+  border-color: #3D4F60;
+}
+
+/******************
+* 
+* Wrapper and Body
+*
+******************/
+#wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    background: #02111B;
+    border-radius: 8px;
+    margin-bottom: 3em;
+    margin-top: 1em;
+}
+#wrapper > .main {
+    padding: 5em 3em 3em 3em;
+}
+#wrapper > section {
+    border-top: solid 1px #3D4F60;
+}
+.main {
+    overflow: hidden;
+    padding: 0 !important;
+    text-align: center;
+}
+.main > section {
+    border-left: solid 1px #3D4F60;
+    border-top: solid 1px #3D4F60;
+    padding: 2em 3em 2em 3em;
+}
+#logout {
+    display:none;
+}
+.logininput {
+    margin: 1em 0 1em 0;
+}
+
+/******************
+* 
+* Header and Header Navigation
+*
+******************/
+#header {
+    background-color: #13293D;
+    border-radius: 8px 8px 0 0;
+    border-top: 0 !important;
+    position: relative;
+    text-align: center;
+}
+#header > header {
+    padding: 3em 3em 2em 3em;
+}
+#header > nav {
+    border-top: solid 1px #3D4F60;
+}
+#header > nav > ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+#header > nav > ul li {
+    border-left: solid 1px #3D4F60;
+    display: inline-block;
+    line-height: 3.5em;
+    min-width: 20%;
+    padding: 0;
+}
+#header > nav > ul li a {
+    -moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    -ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    border: 0;
+    color: #757575;
+    color: inherit;
+    display: block;
+    font-size: 0.8em;
+    letter-spacing: 0.25em;
+    padding: 0 2em;
+    text-decoration: none;
+    text-indent: 0.125em;
+    text-transform: uppercase;
+}
+#header > nav > ul li a:hover {
+    background: rgba(207, 201, 214, 0.035);
+    color: #ffffff !important;
+}
+#header > nav > ul li:first-child {
+    border-left: 0;
+}
+
+/******************
+* 
+* Buttons
+*
+******************/
+ul.links {
+    cursor: default;
+    list-style: none;
+    padding-left: 0;
+}
+ul.links li {
+    display: block;
+    padding: 0 0 1em 0;
+    text-align: center;
+    width: 100%;
+    vertical-align: middle;
+}
+ul.links li:last-child {
+    padding-right: 0;
+}
+ul.links li:first-child {
+    padding-top: 0;
+}
+ul.links li > * {
+    margin: 0 !important;
+    width: 100%;
+}
+.button {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    -moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    background-color: transparent;
+    border-radius: 8px;
+    border: solid 1px #3D4F60 !important;
+    color: #ffffff !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8em;
+    font-weight: 300;
+    height: 3.5em;
+    letter-spacing: 0.25em;
+    line-height: 3.35em;
+    padding: 0 3em;
+    text-align: center;
+    text-decoration: none;
+    text-indent: 0.25em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.button:hover {
+    background: rgba(207, 201, 214, 0.035);
+    color: #ffffff !important;
+}
+.button:active {
+    background: rgba(207, 201, 214, 0.1);
+}
+.button.fit {
+    display: block;
+    margin: 0 0 1em 0;
+    width: 100%;
+}
+
+/******************
+* 
+* Chat 
+*
+******************/
+.chatbox {
+    background-color: #fff;
+}
+
+/****************** 
+* 
+* Media Screen Modifications:
+* 980px, 736px, 480px
+*
+******************/
+@media screen and (max-width: 980px) {
+#wrapper {
+    width: 80% !important;
+    margin-bottom: 2em;
+    margin-top: 4em;
+}
+.main > section {
+    border-left: 0 !important;
+    border-top: solid 1px #3D4F60 !important;
+    float: none;
+    width: 100%;
+}
+.main > section:first-child {
+    border-top: 0 !important;
+}
+}
+
+@media screen and (max-width: 736px) {
+h2 {
+    font-size: 1.25em;
+}
+h3 {
+    font-size: 1.1em;
+}
+#wrapper {
+    width: 95% !important;
+    margin-top: 3em;
+}
+.main > section {
+    padding: 3em 3em 1em 3em !important;
+}
+}
+
+@media screen and (max-width: 480px) {
+#wrapper {
+    width: 100% !important;
+    border-radius: 0;
+    margin-top: 0;
+}
+#header {
+    border-radius: 0;
+}
+#nav li {
+    font-size: .8em;
+}
+.button {
+    padding: 0;
+}
+.main > section {
+    padding: 3em 1.5em 1em 1.5em !important;
+}
+}
