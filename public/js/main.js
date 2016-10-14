@@ -9,30 +9,41 @@ function register() {
 
     var uri = 'signup';
     
-    xhr.open('POST', encodeURI(uri));
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-        var reply;
-        console.log("Status: ",xhr.status);
+    var user = {
+        'username': username,
+        'password': password
+    };
 
-        if (xhr.responseText) {
-            reply = JSON.parse(xhr.responseText);
-            console.log(reply);
-          
-            if (reply.outcome === 'success') {
+    xhr.open('POST', uri, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+
+        // Verify if there is a success code response and some text was sent
+        if (xhr.status === 200 && xhr.responseText) {
+
+            var response = JSON.parse(xhr.responseText);
+            console.log("Got response from passport: ", JSON.stringify(response));
+            
+            if(response.username) {
                 window.location = './login';
             } else {
-                message.innerHTML = reply;
-                username = '';
-                password = '';
-            }
+                 message.innerHTML = response.message;
+                 username = '';
+                 password = '';
+             }
         } else {
-            console.log('Request failed.  Returned status of ' + xhr.status);
+            console.error('Server error for passport. Return status of: ', xhr.statusText);
         }
-
+        
+        return false;
     };
-    
-    xhr.send(encodeURI('username=' + username + '&password=' + password));
+
+    xhr.onerror = function() {
+        console.error('Network error trying to send message!');
+    };
+
+    console.log(JSON.stringify(user));
+    xhr.send(JSON.stringify(user));
 }
 
 function login() {
@@ -45,28 +56,41 @@ function login() {
     var message = document.getElementById('message');
     message.innerHTML = '';
     
-    xhr.open('POST', encodeURI(uri));
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-        var reply = JSON.parse(xhr.responseText);
-        console.log(xhr.status);
-
-        if (xhr.responseText) {
-
-            if (reply.outcome === 'success') {
-                window.location = './chat';
-            } else {
-                message.innerHTML = reply;
-                username = '';
-                password = '';
-            }
-
-        } else {
-            console.log('Request failed.  Returned status of ' + xhr.status);
-        }
+    var user = {
+        'username': username,
+        'password': password
     };
     
-    xhr.send(encodeURI('username=' + username + '&password=' + password));
+    xhr.open('POST', uri, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+
+        // Verify if there is a success code response and some text was sent
+        if (xhr.status === 200 && xhr.responseText) {
+
+            var response = JSON.parse(xhr.responseText);
+            console.log("Got response from passport: ", JSON.stringify(response));
+            
+            if(response.username) {
+                window.location = './chat';
+            } else {
+                 message.innerHTML = response.message;
+                 username = '';
+                 password = '';
+             }
+        } else {
+            console.error('Server error for passport. Return status of: ', xhr.statusText);
+        }
+        
+        return false;
+    };
+
+    xhr.onerror = function() {
+        console.error('Network error trying to send message!');
+    };
+
+    console.log(JSON.stringify(user));
+    xhr.send(JSON.stringify(user));
 }
 
 // Enter is pressed

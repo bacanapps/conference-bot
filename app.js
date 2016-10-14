@@ -112,7 +112,7 @@ app.get('/schedule', function(req, res) {
   User Login and Account Creation
   
 *************************************************************************************************/
-/*app.post('/login', function(req, res, next) {
+app.post('/login', function(req, res, next) {
     passport.authenticate('local-login', function(err, user, info) {
         if (err || !user) {
             res.status(500).json({
@@ -134,57 +134,16 @@ app.get('/schedule', function(req, res) {
 
 app.post('/signup', function(req, res, next) {
       passport.authenticate('local-signup', function(err, user, info) {
-        if (err || !user) { res.status(500).json(info); }
+        if (err || !user) { res.status(500).json({'message':info}); }
         else {
             req.logIn(user, function(err) {
-                if (err) { res.status(500).json(err); }
-                else { res.status(200).send(); }  
+                if (err) { res.status(500).json({'message':err}); }
+                else { res.status(200).json({'username':user.username}); }  
             });      
         }
       })(req, res, next);
-    }); */
-// process the login form
-app.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/loginSuccess', // redirect to the secure profile section
-    failureRedirect: '/loginFailure', // redirect back to the signup page if there is an error
-    failureFlash: true // allow flash messages
-}));
+    }); 
 
-app.get('/loginSuccess', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({
-        username: req.username,
-        outcome: 'success'
-    }, null, 3));
-})
-
-app.get('/loginFailure', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({
-        outcome: 'failure'
-    }, null, 3));
-});
-
-app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/signupSuccess', 
-    failureRedirect: '/signupFailure'
-}));
-
-app.get('/signupSuccess', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({
-        username: req.username,
-        outcome: 'success'
-    }, null, 3));
-});
-
-app.get('/signupFailure', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({
-        outcome: 'failure'
-    }, null, 3));
-});
-    
 app.get('/isLoggedIn', function(req, res) {
     var result = {
         outcome: 'failure'
