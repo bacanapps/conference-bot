@@ -27,10 +27,11 @@ module.exports = function(passport) {
 
     // used to deserialize the user
     passport.deserializeUser(function(username, done) {
-        db.find({selector: {username: username}}, function(err, user) {
+        db.find({selector: {username: username}}, function(err, result) {
             if (err) {
                 return done(err);
             }
+            var user = result.docs[0];
             done(null, user);
         });
     });
@@ -100,7 +101,8 @@ module.exports = function(passport) {
                 var hash_pass = bcrypt.hashSync(password);
                 var user = {
                     username: username,
-                    password: hash_pass
+                    password: hash_pass,
+                    sessions: []
                 };
                 console.log("signup User: " + user);
                 db.insert(user, function(err, body) {

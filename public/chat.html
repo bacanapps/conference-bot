@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="css/main.css" />
 </head>
-<body>
+<body onload="userMessage('');">
 <div id="wrapper" class="container"> 
     <!-- Header -->
     <section id="header">
@@ -15,14 +15,14 @@
             <ul>
                 <li><a href=".">Home</a></li>
                 <li><a href="./chat">Chat</a></li>
-                <li><a href="./schedule">Schedule</a></li>
+                <li><a href="./schedule">Sessions</a></li>
             </ul>
         </nav>
     </section>
     <section class="main chatbox">
         <section>
-        <div id="chatFeed" class="dialogcontainer"></div>
-        <textarea id="chatMessage" class="dialoginput" placeholder="Let's chat about World of Watson" onkeypress="return newEvent(event)"></textarea>
+        <div id="chatFeed" class="chatContainer"></div>
+        <textarea id="chatMessage" class="chatInput" placeholder="Let's chat about World of Watson" onkeypress="return newEvent(event,'message')" autofocus></textarea>
 
            
         </section>

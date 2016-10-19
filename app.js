@@ -21,29 +21,34 @@ var express = require('express'),
 
 require('./config/passport')(passport);
 require('dotenv').load();
+var chatbot = require('./config/bot.js');
+
 
 /*************************************************************************************************
 
   Cloudant Setup
 
 *************************************************************************************************/
-var db;
+var db, dbs, dbu;
 var cloudantURL = process.env.CLOUDANT_URL;
-var dbname = "logs";
+var dbLogs = "logs";
+var dbSess = "sessions";
+var dbUsers = "accounts";
 var Cloudant = require('cloudant')(cloudantURL);
 
 function initDBConnection() {
 
-    // Check to see if the "stats" database exists and create 
-    Cloudant.db.create(dbname, function(err, body) {
+    Cloudant.db.create(dbLogs, function(err, body) {
         if (err) {
-            console.log("Database already exists: ", dbname);
+            console.log("Database already exists: ", dbLogs);
         } else {
-            console.log("New database created: ", dbname);
+            console.log("New database created: ", dbLogs);
         }
     });
 
-    db = Cloudant.db.use(dbname);
+    db = Cloudant.db.use(dbLogs);
+    dbs = Cloudant.db.use(dbSess);
+    dbu = Cloudant.db.use(dbUsers);
     console.log("Database data initialized.");
 }
 
@@ -104,7 +109,11 @@ app.get('/register', function(req, res) {
 });
 
 app.get('/schedule', function(req, res) {
-    res.sendfile('./public/schedule.html');
+    if (req.isAuthenticated()) {
+        res.sendfile('./public/schedule.html');
+    } else {
+        res.sendfile('./public/login.html');
+    }
 });
 
 /************************************************************************************************* 
@@ -118,7 +127,7 @@ app.post('/login', function(req, res, next) {
         else {
             req.logIn(user, function(err) {
                 if (err) { res.status(500).json({'message':err}); }
-                else { res.status(200).json({'username':user.username}); }  
+                else { res.status(200).json({'username':user.username,'sessions':user.sessions}); }  
             });      
         }
       })(req, res, next);
@@ -130,7 +139,7 @@ app.post('/signup', function(req, res, next) {
         else {
             req.logIn(user, function(err) {
                 if (err) { res.status(500).json({'message':err}); }
-                else { res.status(200).json({'username':user.username}); }  
+                else { res.status(200).json({'username':user.username,'sessions':user.sessions}); }  
             });      
         }
       })(req, res, next);
@@ -143,8 +152,70 @@ app.get('/isLoggedIn', function(req, res) {
     if (req.isAuthenticated()) {
         res.outcome = 'success';
         res.username = req.username;
+        res.sessions = req.sessions;
     }
     res.send(JSON.stringify(result, null, 3));
+});
+
+/************************************************************************************************* 
+  
+  Chatbot and Logs
+  
+*************************************************************************************************/
+app.post('/watson', function(req, res) {
+    chatbot.sendMessage(req, function(err, data) {
+        if (err) {
+            console.log("Error in sending message: ", err);
+            return res.status(err.code || 500).json(err);
+        } else {
+            return res.json(data);
+        }
+    });
+
+}); 
+
+/************************************************************************************************* 
+  
+  Session Data
+  
+*************************************************************************************************/
+app.post('/sessions', function(req,res) {
+    dbs.find({selector: { number: req.body.param}}, function(err, result) {
+                if (err) {
+                    console.log("There was an error finding the session: ",err);
+                    res.status(500).json({"error":err});
+                }
+                if (result.docs.length === 0) {
+                    console.log("No session exists.");
+                    res.status(500).json({"error":"No session exists with parameter of "+req.body.param});
+                } else {
+                    var session = result.docs[0];
+                    res.status(200).json(session);
+                }
+ 
+            });
+});
+
+app.post('/userSessions', function(req,res) {
+    console.log("Got request for user sessions: ",req.user);
+    var user = req.user.username;
+    
+    dbu.find({selector: {username: user}}, function(err,result) {
+        if(err) {
+            console.log("Error finding the user: ",err);
+            res.status(500).json({"error":err});
+        } else {
+            var user = result.docs[0];
+            console.log("Result: ",result);
+            
+            if(user.sessions) {
+                console.log("Found sessions: ",JSON.stringify(user.sessions));
+                res.status(200).json({"sessions": user.sessions});
+            } else {
+                res.status(500).json({"error": "No sessions found. Go chat with Watson to add some."});
+            }
+        }
+    });
 });
 
 /************************************************************************************************* 
