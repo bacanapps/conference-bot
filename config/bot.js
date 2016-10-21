@@ -5,6 +5,20 @@ var conversationUsername = process.env.CONVERSATION_USERNAME;
 var conversationPassword = process.env.CONVERSATION_PASSWORD;
 var conversationWorkspace = process.env.CONVERSATION_WORKSPACE;
 
+var cloudantURL = process.env.CLOUDANT_URL;
+var dbname = "logs";
+var Cloudant = require('cloudant')(cloudantURL);
+
+// Create the accounts DB if it doesn't exist
+Cloudant.db.create(dbname, function(err, body) {
+    if (err) {
+        console.log("Database already exists: ", dbname);
+    } else {
+        console.log("New database created: ", dbname);
+    }
+});
+var db = Cloudant.db.use(dbname);
+
 var conversation = watson.conversation({
     url: 'https://gateway.watsonplatform.net/conversation/api',
     username: conversationUsername,
@@ -38,6 +52,10 @@ var chatbot = {
                     console.log("Got response from Watson: ", JSON.stringify(data));
 
                     updateContextObject(data, function(err, res) {
+                        var owner = req.user.username;
+                        var conv = data.conversation;
+
+                        chatLogs(owner, conv, res);
 
                         return callback(null, res);
                     });
@@ -72,7 +90,7 @@ function buildContextObject(req, callback) {
         text: message // User defined text to be sent to service
     };
 
-    // This is the first message, add the user's name and get their healthcare object
+    // This is the first message, add the username
     if (message === '' && !context) {
         params.context = {
             username: req.username,
@@ -85,14 +103,80 @@ function buildContextObject(req, callback) {
 
 function updateContextObject(response, callback) {
 
-    var context = response.context; 
+    var context = response.context;
     var text = '';
 
-    text = response.output.text[0]; 
+    text = response.output.text[0];
     response.output.text = text;
     response.context = context;
 
     return callback(null, response);
+}
+
+function chatLogs(owner, conversation, response) {
+
+    console.log("response object is: ", response);
+
+    // Blank log file to parse down the response object
+    var logFile = {
+        inputText: '',
+        responseText: '',
+        entities: {},
+        intents: {},
+    };
+
+    logFile.inputText = response.input.text;
+    logFile.responseText = response.output.text;
+    logFile.entities = response.entities;
+    logFile.intents = response.intents;
+    logFile.date = new Date();
+
+    var date = new Date();
+    var doc = {};
+
+    var query = {
+        selector: {
+            'conversation': conversation
+        }
+    };
+
+    db.find(query, function(err, result) {
+        if (err) {
+            console.log("Couldn't find log file to update. Creating new.");
+
+            doc = {
+                owner: owner,
+                date: date,
+                conversation: conversation,
+                lastContext: response.context,
+                logs: []
+            };
+
+            doc.logs.push(logFile);
+
+            db.saveDoc(doc, {
+                success: function(response, textStatus, jqXHR) {
+                    console.log("Log creation success: ",JSON.stringify(response));
+                },
+                error: function(err, textStatus, errorThrown) {
+                    console.log("Log creation failed: ",errorThrown);
+                }
+            });
+        } else {
+            doc = result.docs[0];
+            doc.lastContext = response.context;
+            doc.logs.push(logFile);
+
+            db.saveDoc(doc, {
+                success: function(response, textStatus, jqXHR) {
+                    console.log("Log file saved: ",JSON.stringify(response));
+                },
+                error: function(err, textStatus, errorThrown) {
+                    console.log("Log save failed: ",errorThrown);
+                }
+            });
+        }
+    });
 }
 
 module.exports = chatbot;

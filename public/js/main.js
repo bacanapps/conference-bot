@@ -95,7 +95,7 @@ function login() {
         console.error('Network error trying to send message!');
     };
 
-    console.log(JSON.stringify(user));
+    //console.log(JSON.stringify(user));
     xhr.send(JSON.stringify(user));
 }
 
@@ -107,11 +107,11 @@ function checkStatus() {
     var xhr = new XMLHttpRequest();
     var path = '/isLoggedIn';
     xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
             var reply = JSON.parse(xhr.responseText);
             console.log("Reply: ", reply);
 
-            if (reply.outcome == 'success') {
+            if (reply.outcome === 'success') {
                 login.style.display = 'none';
                 logout.style.display = 'inherit';
                 register.style.display = 'none';
@@ -172,8 +172,10 @@ function displayMessage(text, user) {
     var input = document.getElementById('chatMessage');
 
     if (user === bot) {
-        bubble.innerHTML = "<div class='bubble watson'><p>" + text + "</p></div>";
+        bubble.className = "bubble watson";
+        bubble.innerHTML = "<p>" + text + "</p>";
     } else {
+        bubble.className = "bubble user";
         bubble.innerHTML = "<div class='bubble user'><p>" + text + "</p></div>";
     }
 
@@ -233,7 +235,7 @@ function getSessions() {
     var xhr = new XMLHttpRequest();
     var uri = '/userSessions';
 
-    xhr.open('POST', uri, true);
+    xhr.open('GET', uri, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
         var response = xhr.responseText;
@@ -242,7 +244,7 @@ function getSessions() {
 
             //console.log("Got response from server: ", response);
             sessions = (JSON.parse(response)).sessions;
-            
+
             for (var i = 0; i < sessions.length; i++) {
                 var sessList = document.getElementById('mySessions');
                 var currSess = sessions[i];
@@ -255,21 +257,21 @@ function getSessions() {
                     sessItem.className = "sessionItem checked";
                 } else {
                     sessItem.className = "sessionItem";
-                    
+
                 }
-                
+
                 sessItem.innerHTML = sessText;
 
                 var span = document.createElement("SPAN");
                 var txt = document.createTextNode("\u00D7");
                 span.className = "close";
                 span.appendChild(txt);
-                
+
                 sessItem.appendChild(span);
                 sessList.appendChild(sessItem);
 
             }
-            
+
             listListener();
 
         } else {
@@ -300,6 +302,7 @@ function listListener() {
     sessList.addEventListener('click', function(ev) {
         if (ev.target.tagName === 'LI') {
             ev.target.classList.toggle('checked');
+            updateList(ev.target.id, "checked");
         }
     }, false);
 
@@ -310,4 +313,40 @@ function listListener() {
             div.style.display = "none";
         };
     }
+}
+
+function updateList(id, action) {
+    var sessItem = sessions[id];
+
+    if (action === "checked") {
+        sessItem.status = action;
+        sessions[id] = sessItem;
+    } else if (action === "delete") {
+        sessions.splice(id, 1);
+    }
+
+        var xhr = new XMLHttpRequest();
+        var uri = '/updateSessions';
+
+        var params = {
+            "sessions": sessions
+        };
+
+        xhr.open('POST', uri, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            var response = xhr.responseText;
+
+            if (xhr.status === 200 && xhr.responseText) {
+                console.log("Success updated session list for user.");
+            } else {
+                console.error('Server error for request. Return status of: ', xhr.statusText);
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('Network error trying to send message!');
+        };
+
+        xhr.send(params);   
 }

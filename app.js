@@ -38,11 +38,11 @@ var Cloudant = require('cloudant')(cloudantURL);
 
 function initDBConnection() {
 
-    Cloudant.db.create(dbLogs, function(err, body) {
+    Cloudant.db.create(dbSess, function(err, body) {
         if (err) {
-            console.log("Database already exists: ", dbLogs);
+            console.log("Database already exists: ", dbSess);
         } else {
-            console.log("New database created: ", dbLogs);
+            console.log("New database created: ", dbSess);
         }
     });
 
@@ -149,10 +149,11 @@ app.get('/isLoggedIn', function(req, res) {
     var result = {
         outcome: 'failure'
     };
+    
     if (req.isAuthenticated()) {
-        res.outcome = 'success';
-        res.username = req.username;
-        res.sessions = req.sessions;
+        result.outcome = 'success';
+        result.username = req.username;
+        result.sessions = req.sessions;
     }
     res.send(JSON.stringify(result, null, 3));
 });
@@ -196,7 +197,7 @@ app.post('/sessions', function(req,res) {
             });
 });
 
-app.post('/userSessions', function(req,res) {
+app.get('/userSessions', function(req,res) {
     console.log("Got request for user sessions: ",req.user);
     var user = req.user.username;
     
@@ -214,6 +215,31 @@ app.post('/userSessions', function(req,res) {
             } else {
                 res.status(500).json({"error": "No sessions found. Go chat with Watson to add some."});
             }
+        }
+    });
+});
+
+app.post('/updateSessions', function(req,res) {
+    console.log("Updating user session list: ",req.body.sessions);
+    var user = req.user.username;
+    
+    dbu.find({selector: {username: user}}, function(err,result){
+        if(err) {
+            console.log("Couldn't find user to update.");
+            res.status(500).json({"error":err});
+        } else {
+            var doc = result.docs[0];
+            
+            doc.sessions = req.body.sessions;
+            
+            dbu.saveDoc(doc, {
+                success: function(response, textStatus, jqXHR){
+                    res.status(200).json(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    res.status(500).json({"error":errorThrown});
+                }
+            });
         }
     });
 });
