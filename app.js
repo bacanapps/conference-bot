@@ -180,7 +180,7 @@ app.post('/watson', function(req, res) {
   Session Data
   
 *************************************************************************************************/
-app.post('/sessions', function(req,res) {
+app.get('/sessions', function(req,res) {
     dbs.find({selector: { number: req.body.param}}, function(err, result) {
                 if (err) {
                     console.log("There was an error finding the session: ",err);
@@ -232,14 +232,15 @@ app.post('/updateSessions', function(req,res) {
             
             doc.sessions = req.body.sessions;
             
-            dbu.saveDoc(doc, {
-                success: function(response, textStatus, jqXHR){
-                    res.status(200).json(response);
-                },
-                error: function(jqXHR, textStatus, errorThrown){
-                    res.status(500).json({"error":errorThrown});
-                }
-            });
+            dbu.insert(doc, function(err, body) {
+                    if (err) {
+                        console.log("There was an error updating the sessions: ",err);
+                        res.status(500).json({"error":err});
+                    } else {
+                        console.log("User session successfully updated: ",body);
+                        res.status(200).json({"sessions":doc.sessions});
+                    }
+                });
         }
     });
 });

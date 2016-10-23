@@ -53,9 +53,11 @@ var chatbot = {
 
                     updateContextObject(data, function(err, res) {
                         var owner = req.user.username;
-                        var conv = data.conversation;
-
-                        chatLogs(owner, conv, res);
+                        var conv = data.context.conversation_id;
+                        
+                        if(data.context.system.dialog_turn_counter>1) {
+                            chatLogs(owner, conv, res);
+                        }
 
                         return callback(null, res);
                     });
@@ -142,39 +144,42 @@ function chatLogs(owner, conversation, response) {
 
     db.find(query, function(err, result) {
         if (err) {
-            console.log("Couldn't find log file to update. Creating new.");
-
-            doc = {
-                owner: owner,
-                date: date,
-                conversation: conversation,
-                lastContext: response.context,
-                logs: []
-            };
-
-            doc.logs.push(logFile);
-
-            db.saveDoc(doc, {
-                success: function(response, textStatus, jqXHR) {
-                    console.log("Log creation success: ",JSON.stringify(response));
-                },
-                error: function(err, textStatus, errorThrown) {
-                    console.log("Log creation failed: ",errorThrown);
-                }
-            });
+            console.log("Couldn't find log file.");
         } else {
             doc = result.docs[0];
-            doc.lastContext = response.context;
-            doc.logs.push(logFile);
 
-            db.saveDoc(doc, {
-                success: function(response, textStatus, jqXHR) {
-                    console.log("Log file saved: ",JSON.stringify(response));
-                },
-                error: function(err, textStatus, errorThrown) {
-                    console.log("Log save failed: ",errorThrown);
-                }
-            });
+            if (result.docs.length === 0) {
+                console.log("No log. Creating new one.");
+
+                doc = {
+                    owner: owner,
+                    date: date,
+                    conversation: conversation,
+                    lastContext: response.context,
+                    logs: []
+                };
+
+                doc.logs.push(logFile);
+
+                db.insert(doc, function(err, body) {
+                    if (err) {
+                        console.log("There was an error creating the log: ",err);
+                    } else {
+                        console.log("Log successfull created: ",body);
+                    }
+                });
+            } else {
+                doc.lastContext = response.context;
+                doc.logs.push(logFile);
+
+                db.insert(doc, function(err, body) {
+                    if (err) {
+                        console.log("There was an error updating the log: ",err);
+                    } else {
+                        console.log("Log successfull updated: ",body);
+                    }
+                });
+            }
         }
     });
 }

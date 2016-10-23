@@ -176,7 +176,7 @@ function displayMessage(text, user) {
         bubble.innerHTML = "<p>" + text + "</p>";
     } else {
         bubble.className = "bubble user";
-        bubble.innerHTML = "<div class='bubble user'><p>" + text + "</p></div>";
+        bubble.innerHTML = "<p>" + text + "</p>";
     }
 
     chat.appendChild(bubble);
@@ -288,17 +288,7 @@ function getSessions() {
 }
 
 function listListener() {
-    var sessDelete = document.getElementsByClassName("close");
     var sessList = document.getElementById("mySessions");
-
-    for (var i = 0; i < close.length; i++) {
-        sessDelete[i].onclick = function() {
-            var div = this.parentElement;
-            div.style.display = "none";
-            //removeSession();
-        };
-    }
-
     sessList.addEventListener('click', function(ev) {
         if (ev.target.tagName === 'LI') {
             ev.target.classList.toggle('checked');
@@ -307,29 +297,32 @@ function listListener() {
     }, false);
 
     var closeItems = document.getElementsByClassName("close");
-    for (i = 0; i < closeItems.length; i++) {
+    for (var i = 0; i < closeItems.length; i++) {
         closeItems[i].onclick = function() {
             var div = this.parentElement;
             div.style.display = "none";
+            updateList(div.id,"delete");
         };
     }
 }
 
 function updateList(id, action) {
     var sessItem = sessions[id];
+    console.log(sessItem);
 
     if (action === "checked") {
         sessItem.status = action;
         sessions[id] = sessItem;
     } else if (action === "delete") {
         sessions.splice(id, 1);
+        console.log(sessions);
     }
 
         var xhr = new XMLHttpRequest();
         var uri = '/updateSessions';
 
         var params = {
-            "sessions": sessions
+            sessions: sessions
         };
 
         xhr.open('POST', uri, true);
@@ -347,6 +340,6 @@ function updateList(id, action) {
         xhr.onerror = function() {
             console.error('Network error trying to send message!');
         };
-
-        xhr.send(params);   
+        
+        xhr.send(JSON.stringify(params));   
 }
