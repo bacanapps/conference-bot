@@ -180,23 +180,6 @@ app.post('/watson', function(req, res) {
   Session Data
   
 *************************************************************************************************/
-app.get('/sessions', function(req,res) {
-    dbs.find({selector: { number: req.body.param}}, function(err, result) {
-                if (err) {
-                    console.log("There was an error finding the session: ",err);
-                    res.status(500).json({"error":err});
-                }
-                if (result.docs.length === 0) {
-                    console.log("No session exists.");
-                    res.status(500).json({"error":"No session exists with parameter of "+req.body.param});
-                } else {
-                    var session = result.docs[0];
-                    res.status(200).json(session);
-                }
- 
-            });
-});
-
 app.get('/userSessions', function(req,res) {
     console.log("Got request for user sessions: ",req.user);
     var user = req.user.username;

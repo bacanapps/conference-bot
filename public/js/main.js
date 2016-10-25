@@ -210,6 +210,11 @@ function userMessage(message) {
             console.log("Got response from Watson: ", JSON.stringify(response));
 
             displayMessage(text, bot);
+            
+            if(context.reprompt === "true") {
+                context.reprompt = "false";
+                userMessage(response.input.text);
+            }
 
         } else {
             console.error('Server error for Conversation. Return status of: ', xhr.statusText);
@@ -248,7 +253,7 @@ function getSessions() {
             for (var i = 0; i < sessions.length; i++) {
                 var sessList = document.getElementById('mySessions');
                 var currSess = sessions[i];
-                var sessText = currSess.number + " - " + currSess.type + " - " + currSess.title;
+                var sessText = currSess.date + " " + currSess.start + " | " + currSess.number + " - " + currSess.title;
 
                 var sessItem = document.createElement('LI');
                 sessItem.setAttribute("id", i);
@@ -304,14 +309,18 @@ function listListener() {
             updateList(div.id,"delete");
         };
     }
-}
+}  
 
 function updateList(id, action) {
     var sessItem = sessions[id];
     console.log(sessItem);
 
     if (action === "checked") {
-        sessItem.status = action;
+        if(sessItem.status === "checked") {
+            sessItem.status = "unchecked";
+        } else {
+            sessItem.status = action;
+        }
         sessions[id] = sessItem;
     } else if (action === "delete") {
         sessions.splice(id, 1);

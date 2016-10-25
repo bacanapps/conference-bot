@@ -478,4 +478,6 @@ h3 {
 .main > section {
     padding: 3em 1.5em 1em 1.5em !important;
 }
+.chatInput {
+    text-size: 0.8em;
 }
